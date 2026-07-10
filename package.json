@@ -1,6 +1,6 @@
 {
   "name": "multipitch-detector",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Browser-first multi-pitch detection using a Klapuri-style harmonic summation approach",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
