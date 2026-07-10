@@ -2,6 +2,8 @@
 
 TypeScript library for browser-first multi-pitch detection inspired by Anssi Klapuri's 2006 harmonic summation method.
 
+Live demo: https://zero-is-one.github.io/multipitch-detector/demo/
+
 ## Install
 
 ```bash
