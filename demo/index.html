@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>multipitch demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <p class="eyebrow">multipitch</p>
+        <h1>Live browser multipitch detection</h1>
+        <p class="lede">
+          Start the microphone, play single notes or simple chords, and watch
+          the detector report the most likely simultaneous pitches.
+        </p>
+      </section>
+
+      <section class="panel controls">
+        <div class="section-heading">
+          <h2>Controls</h2>
+        </div>
+        <div class="row">
+          <button id="startButton" type="button">Start microphone</button>
+          <button id="stopButton" type="button" disabled>Stop</button>
+          <button id="pauseButton" type="button" disabled>Pause updates</button>
+        </div>
+        <div class="grid">
+          <label>
+            <span class="field-label"
+              >Processing mode
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="processing-mode"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain processing mode"
+              >
+                (?)
+              </button></span
+            >
+            <select id="processingMode">
+              <option value="auto">auto</option>
+              <option value="audio-worklet">audio-worklet</option>
+              <option value="script-processor">script-processor</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label"
+              >Frame size
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="frame-size"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain frame size"
+              >
+                (?)
+              </button></span
+            >
+            <select id="frameSize">
+              <option value="2048">2048</option>
+              <option value="4096" selected>4096</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label"
+              >Hop size
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="hop-size"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain hop size"
+              >
+                (?)
+              </button></span
+            >
+            <select id="hopSize">
+              <option value="256">256</option>
+              <option value="512" selected>512</option>
+              <option value="1024">1024</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label"
+              >Max polyphony
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="max-polyphony"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain max polyphony"
+              >
+                (?)
+              </button></span
+            >
+            <select id="maxPolyphony">
+              <option value="2">2</option>
+              <option value="4" selected>4</option>
+              <option value="6">6</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label"
+              >Smoothing factor
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="smoothing-factor"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain smoothing factor"
+              >
+                (?)
+              </button></span
+            >
+            <input
+              id="smoothingFactor"
+              type="range"
+              min="0"
+              max="0.9"
+              step="0.05"
+              value="0.35"
+            />
+            <output id="smoothingFactorValue">0.35</output>
+          </label>
+          <label>
+            <span class="field-label"
+              >Smoothing tolerance (cents)
+              <button
+                class="help-link help-link--inline"
+                type="button"
+                data-help-topic="smoothing-tolerance"
+                aria-haspopup="dialog"
+                aria-controls="controlsHelpDialog"
+                aria-label="Explain smoothing tolerance"
+              >
+                (?)
+              </button></span
+            >
+            <input
+              id="smoothingTolerance"
+              type="range"
+              min="0"
+              max="300"
+              step="5"
+              value="35"
+            />
+            <output id="smoothingToleranceValue">35</output>
+          </label>
+          <label class="debug-toggle-label">
+            <span>Debug metrics</span>
+            <input id="debugMetricsToggle" type="checkbox" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel status-panel">
+        <div class="status-strip">
+          <div>
+            <span class="label">Status</span>
+            <strong id="statusValue">idle</strong>
+          </div>
+          <div>
+            <span class="label">Backend</span>
+            <strong id="backendValue">-</strong>
+          </div>
+          <div>
+            <span class="label">Frames</span>
+            <strong id="frameCountValue">0</strong>
+          </div>
+        </div>
+        <p id="errorValue" class="error"></p>
+        <div id="debugMetricsPanel" class="debug-panel" hidden>
+          <h3>Confidence diagnostics</h3>
+          <dl>
+            <div>
+              <dt>Raw confidence</dt>
+              <dd id="debugRawConfidence">-</dd>
+            </div>
+            <div>
+              <dt>Best salience</dt>
+              <dd id="debugBestSalience">-</dd>
+            </div>
+            <div>
+              <dt>Second salience</dt>
+              <dd id="debugSecondSalience">-</dd>
+            </div>
+            <div>
+              <dt>Margin</dt>
+              <dd id="debugSalienceMargin">-</dd>
+            </div>
+            <div>
+              <dt>Best/second ratio</dt>
+              <dd id="debugBestSecondRatio">-</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="panel pitch-panel">
+        <h2>Detected pitches</h2>
+        <div id="pitchList" class="pitch-list empty">No frames yet</div>
+      </section>
+
+      <section class="panel log-panel">
+        <h2>Recent frames</h2>
+        <pre id="logOutput">[]</pre>
+      </section>
+    </main>
+
+    <dialog
+      id="controlsHelpDialog"
+      class="help-dialog"
+      aria-labelledby="helpDialogTitle"
+    >
+      <form method="dialog" class="help-dialog__surface">
+        <div class="help-dialog__header">
+          <div>
+            <p class="eyebrow">Quick guide</p>
+            <h2 id="helpDialogTitle">Control help</h2>
+          </div>
+          <button
+            id="helpCloseButton"
+            class="help-close"
+            type="submit"
+            aria-label="Close help"
+          >
+            Close
+          </button>
+        </div>
+        <div class="help-copy">
+          <article>
+            <h3 id="helpTopicTitle">Processing mode</h3>
+            <p id="helpTopicBody">
+              This chooses how audio gets from the microphone into the detector.
+            </p>
+          </article>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
