@@ -1,82 +1,37 @@
-# multi-pitch detector
+# multipitch detector
 
 TypeScript library for browser-first multi-pitch detection inspired by Anssi Klapuri's 2006 harmonic summation method.
-
-## Current status
-
-This repository currently provides an offline frame analyzer:
-
-- `OfflineKlapuriDetector` in `src/core/detector.ts`
-- Frame-wise output with `frequencyHz`, `midi`, `note`, `confidence`, and salience
-- Iterative salience + cancellation loop with configurable max polyphony
-- `StreamingKlapuriDetector` for chunked real-time sample processing
-- `MicrophonePitchStream` for browser microphone integration
-- AudioWorklet-first microphone backend with ScriptProcessor fallback for older browsers
 
 ## Install
 
 ```bash
 npm install multipitch-detector
-```
-
-With other package managers:
-
-```bash
 yarn add multipitch-detector
 pnpm add multipitch-detector
 bun add multipitch-detector
 ```
 
-## Development Setup
+## Browser Microphone Example
 
-```bash
-npm install
+```ts
+import { MicrophonePitchStream } from "multipitch-detector";
+
+const mic = new MicrophonePitchStream({
+  onFrame: (result) => {
+    console.log(result.pitches);
+  },
+  onError: (error) => {
+    console.error(error);
+  },
+  processingMode: "auto",
+  workletModuleUrl: new URL("./capture.worklet.js", import.meta.url).toString(),
+});
+
+await mic.start();
+console.log(mic.activeBackend);
+// ... later
+await mic.stop();
 ```
-
-## Build
-
-```bash
-npm run build
-```
-
-## Demo
-
-```bash
-npm run demo
-```
-
-Then open `http://localhost:4173/demo/` in a browser with microphone permission enabled.
-
-## GitHub Pages Demo
-
-The repository now includes a GitHub Pages deployment workflow. After you enable Pages in the repository settings, each push to `main` will publish a static build of the demo.
-
-The deployed URLs will be:
-
-- Repository landing page: `https://<your-user>.github.io/<your-repo>/`
-- Demo page: `https://<your-user>.github.io/<your-repo>/demo/`
-
-To build the Pages artifact locally:
-
-```bash
-npm run pages:build
-```
-
-That generates a `site/` folder containing the static files that GitHub Pages deploys.
-
-## Test
-
-```bash
-npm test
-```
-
-## Offline Wav Evaluation
-
-```bash
-npm run evaluate:wav -- path/to/file.wav
-```
-
-This prints frame-by-frame JSON with timestamps and detected pitches. The wav reader currently supports PCM integer wav files and 32-bit float wav files, and downmixes multichannel audio to mono before analysis.
 
 ## Example
 
@@ -109,28 +64,6 @@ const stream = new StreamingKlapuriDetector({
 
 // Call this from your audio callback with incoming PCM data.
 stream.processSamples(new Float32Array(512));
-```
-
-## Browser Microphone Example
-
-```ts
-import { MicrophonePitchStream } from "multipitch-detector";
-
-const mic = new MicrophonePitchStream({
-  onFrame: (result) => {
-    console.log(result.pitches);
-  },
-  onError: (error) => {
-    console.error(error);
-  },
-  processingMode: "auto",
-  workletModuleUrl: new URL("./capture.worklet.js", import.meta.url).toString(),
-});
-
-await mic.start();
-console.log(mic.activeBackend);
-// ... later
-await mic.stop();
 ```
 
 ## Demo Notes
