@@ -1,5 +1,5 @@
 {
-  "name": "multipitch",
+  "name": "multipitch-detector",
   "version": "0.1.0",
   "description": "Browser-first multi-pitch detection using a Klapuri-style harmonic summation approach",
   "main": "./dist/index.cjs",
@@ -17,6 +17,7 @@
     "demo": "npm run build && node demo/server.mjs",
     "demo:serve": "node demo/server.mjs",
     "evaluate:wav": "npm run build && node scripts/evaluate-wav.mjs",
+    "pages:build": "npm run build && node scripts/prepare-pages.mjs",
     "prepublishOnly": "npm run build && npm run typecheck && npm run test",
     "test": "vitest run",
     "test:watch": "vitest",
