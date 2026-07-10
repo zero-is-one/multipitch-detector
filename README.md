@@ -74,3 +74,7 @@ stream.processSamples(new Float32Array(512));
 - The streaming detector now applies a light temporal smoother by default to reduce frame-to-frame pitch jitter in live use.
 - If you change source files, rerun `npm run build` before refreshing the demo page.
 - For GitHub Pages, the workflow publishes a prebuilt `site/` directory that contains both `demo/` and `dist/`.
+
+## AI Disclaimer
+
+The majority of this project was written by AI. The code, documentation, and implementation decisions should still be reviewed and validated by a human before use in production or other critical environments.
